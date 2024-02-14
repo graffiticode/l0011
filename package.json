@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@graffiticode/basis": "^1.4.0",
-    "@types/node": "18.11.9",
-    "@types/react": "18.0.25",
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
     "@types/react-dom": "18.0.8",
     "bent": "^7.3.12",
     "d3": "^7.7.0",
@@ -27,13 +27,15 @@
     "react-dom": "18.2.0",
     "react-redux": "^8.0.5",
     "sharp": "^0.31.3",
-    "swr": "^2.2.4",
-    "typescript": "4.8.4"
+    "swr": "^2.2.4"
   },
   "devDependencies": {
+    "@types/node": "20.11.17",
+    "@types/react": "18.2.55",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.27",
     "spec-md": "^3.1.0",
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^3.3.3",
+    "typescript": "5.3.3"
   }
 }

@@ -13,17 +13,22 @@ function isNonNullNonEmptyObject(obj) {
   );
 }
 
-const View = () => {
+const View = (props) => {
   const router = useRouter();
-  const { access_token: accessToken, id } = router.query || props;
+  const { access_token: accessToken, id: initialId } = router.query || props;
   const [ recompile, setRecompile ] = useState(true);
   const [ height, setHeight ] = useState(0);
+  const [ id, setId ] = useState(initialId);
+  useEffect(() => {
+    setId(initialId);
+  }, [initialId]);
   useEffect(() => {
     // If `id` changes, then recompile.
     setRecompile(true);
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
+    console.log("state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
     case "compiled":
       return {
@@ -51,6 +56,7 @@ const View = () => {
     compile
   );
 
+  console.log("View() resp.data=" + JSON.stringify(resp.data, null, 2));
   if (resp.data) {
     state.apply({
       type: "compiled",
@@ -59,9 +65,10 @@ const View = () => {
     setRecompile(false);
   }
 
+  // TODO: get id
   useEffect(() => {
-    window.parent.postMessage({height}, "*");
-  }, [height]);
+    window.parent.postMessage({height, id}, "*");
+  }, [height, id]);
 
   return (
     isNonNullNonEmptyObject(state) &&

@@ -32,6 +32,7 @@ export const postApiCompile = async ({ accessToken, id, data }) => {
     const post = bent(apiUrl, "POST", "json", headers);
     const body = { id, data };
     const resp = await post('/compile', body);
+    console.log("postApiCompile() resp=" + JSON.stringify(resp, null, 2));
     if (resp.status !== "success") {
       throw new Error(`failed to post compile ${id}: ${error.message}`);
     }

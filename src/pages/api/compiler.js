@@ -30,7 +30,10 @@ export class Transformer extends BasisTransformer {
     this.visit(node.elts[0], options, async (e0, v0) => {
       const err = e0;
       const val = v0.pop();
-      resume(err, val);
+      resume(err, {
+        ...val,
+        ...options.data,
+      });
     });
   }
 }
