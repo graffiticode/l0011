@@ -145,7 +145,6 @@ function Combo({key, value, options, onChange}) {
 const optionsFromEnum = e => e.map((name, index) => ({id: index, name}));
 
 function Props({ state }) {
-  console.log("Props() state.data=" + JSON.stringify(state.data, null, 2));
   const field = [];
   const data = state.data;
   const schema = data.schema;

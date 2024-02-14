@@ -56,7 +56,6 @@ const View = (props) => {
     compile
   );
 
-  console.log("View() resp.data=" + JSON.stringify(resp.data, null, 2));
   if (resp.data) {
     state.apply({
       type: "compiled",
