@@ -1,10 +1,10 @@
 import { postApiCompile } from "../lib/api";
 export const compile = async ({ accessToken, id, data }) => {
-  console.log("compile() id=" + id + " data=" + JSON.stringify(data, null, 2));
   try {
     const index = Object.keys(data).length > 0 && 1 || 2; // Empty data so use full id.
     id = id.split("+").slice(0, index).join("+");  // Re-compile state with code id.
-    return await postApiCompile({ accessToken, id, data });
+    const resp = await postApiCompile({ accessToken, id, data });
+    return resp;
   } catch (x) {
     console.log("./swr/fetchers/compile()");
     console.log(x.stack);

@@ -32,28 +32,11 @@ export const postApiCompile = async ({ accessToken, id, data }) => {
     const post = bent(apiUrl, "POST", "json", headers);
     const body = { id, data };
     const resp = await post('/compile', body);
-    console.log("postApiCompile() resp=" + JSON.stringify(resp, null, 2));
     if (resp.status !== "success") {
       throw new Error(`failed to post compile ${id}: ${error.message}`);
     }
-    return resp.data;
+    return resp;
   } catch (err) {
     throw err;
   }
 };
-
-export const postCompile = async ({ id, data }) => {
-  const query = gql`
-    mutation (id: String!, data: String!) {
-      compile(id: $id, data: $data)
-    }
-  `;
-  // const token = await user.getToken();
-  const client = new GraphQLClient("/api", {
-    headers: {
-      // authorization: token,
-    }
-  });
-  return client.request(query, { id, daa }).then(data => data.compile);
-};
-

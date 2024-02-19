@@ -15,28 +15,28 @@ function isNonNullNonEmptyObject(obj) {
 
 const View = (props) => {
   const router = useRouter();
-  const { access_token: accessToken, id: initialId } = router.query || props;
-  const [ recompile, setRecompile ] = useState(true);
+  const { access_token: accessToken, id } = router.query || props;
+  const [ doCompile, setDoCompile ] = useState(false);
   const [ height, setHeight ] = useState(0);
-  const [ id, setId ] = useState(initialId);
+  const [ newId, setNewId ] = useState(id);
+
   useEffect(() => {
-    setId(initialId);
-  }, [initialId]);
-  useEffect(() => {
-    // If `id` changes, then recompile.
-    setRecompile(true);
+    // If `id` changes, then doCompile.
+    setNewId(id);
+    setDoCompile(true);
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
-    console.log("state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
+    console.log("View/state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
-    case "compiled":
+    case "compile":
+      setDoCompile(false);
       return {
         ...data,
         ...args,
       };
     case "change":
-      setRecompile(true);
+      setDoCompile(true);
       return {
         ...data,
         ...args,
@@ -47,27 +47,27 @@ const View = (props) => {
     }
   }));
 
-  const resp = useSWR(
-    recompile && accessToken && id && {
+  const compileResp = useSWR(
+    doCompile && accessToken && newId && {
       accessToken,
-      id,
+      id: newId,
       data: state.data,
     },
     compile
   );
 
-  if (resp.data) {
+  if (compileResp.data) {
+    const { id, data } = compileResp.data;
     state.apply({
-      type: "compiled",
-      args: resp.data,
+      type: "compile",
+      args: data,
     });
-    setRecompile(false);
+    setNewId(id);
   }
 
-  // TODO: get id
   useEffect(() => {
     window.parent.postMessage({height, id}, "*");
-  }, [height, id]);
+  }, [id, height]);
 
   return (
     isNonNullNonEmptyObject(state) &&

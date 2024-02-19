@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { RadioGroup } from '@headlessui/react'
 import { Switch } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
@@ -80,24 +80,33 @@ function Toggle({ type, disabled, enabled, onChange }) {
   )
 }
 
-function Combo({key, value, options, onChange}) {
-  const [query, setQuery] = useState(value);
-  const [selectedOption, setSelectedOption] = useState(options[0]);
+const optionsFromList = list => list.map((name, id) => ({id, name}));
+
+function Combo({value = "", list, onChange}) {
+  const [ options ] = useState(optionsFromList(list));
+  const [query, setQuery] = useState('')
+  const [selectedOption, setSelectedOption] = useState(null)
   const filteredOptions =
     query === ''
       ? options
       : options.filter((option) => {
           return option.name.toLowerCase().includes(query.toLowerCase())
-        })
+      })
   useEffect(() => {
-    onChange(selectedOption.name);
+    if (selectedOption) {
+      onChange(selectedOption.name);
+    }
   }, [selectedOption]);
+  let key = 1;
   return (
-    <Combobox key={key} as="div" value={selectedOption} onChange={setSelectedOption}>
+    <Combobox as="div" value={selectedOption} onChange={setSelectedOption}>
       <div className="relative mt-2">
         <Combobox.Input
           className="w-full rounded-none border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6 focus:outline-none"
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={
+            (event) => (
+              setQuery(event.target.value)
+            )}
           displayValue={(option) => option?.name}
         />
         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
@@ -105,10 +114,10 @@ function Combo({key, value, options, onChange}) {
         </Combobox.Button>
 
         {filteredOptions.length > 0 && (
-          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-none bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredOptions.map((option) => (
               <Combobox.Option
-                key={option.id}
+                key={key++}
                 value={option}
                 className={({ active }) =>
                   classNames(
@@ -142,8 +151,6 @@ function Combo({key, value, options, onChange}) {
   )
 }
 
-const optionsFromEnum = e => e.map((name, index) => ({id: index, name}));
-
 function Props({ state }) {
   const field = [];
   const data = state.data;
@@ -158,29 +165,38 @@ function Props({ state }) {
       input: {type: "Text", values: data[key] || ""},
     };
   });
-  const handleChange = args => (console.log("handleChange() args=" + JSON.stringify(args), state.apply({type: "change", args})))
+  const handleChange = args => {
+    state.apply({
+      type: "change",
+      args,
+    });
+  };
+  let key = 1;
   return (
     <div className="p-2">
       <div className="px-4 py-6 font-light grid grid-cols-1 md:grid-cols-5 text-sm">
         {
-          fields.map(field => {
+          fields.map((field) => {
             const propDef = propDefs[field.name];
             const Input = field.input;
             return (
               <>
-                <div className="font-mono pt-4 md:pt-0">{field.name}</div>
-                <div className="col-span-1 md:col-span-3 text-gray-500 pb-2">{field.desc}<br/><span className="font-mono p-1 rounded-none bg-gray-100 text-xs">{field.type}</span></div>
-                <div className="col-span-1">
+                <div key={key++} className="font-mono pt-4 md:pt-0">{field.name}</div>
+                <div key={key++} className="col-span-1 md:col-span-3 text-gray-500 pb-2">{field.desc}<br/><span className="font-mono p-1 rounded-none bg-gray-100 text-xs">{field.type}</span></div>
+                <div key={key++} className="col-span-1">
                   {
                     propDef.enum &&
                       <Combo
-                        options={optionsFromEnum(propDef.enum)}
-                        value={field.input.values}
+                        key={key++}
+                        list={propDef.enum}
+                        value={state[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
-                      /> ||
+                      />
+                      ||
                       propDef.type === "boolean" &&
-                      <Toggle type={field.name}
-                              onChange={(value) => handleChange({[field.name]: value})}
+                      <Toggle
+                        type={field.name}
+                        onChange={(value) => handleChange({[field.name]: value})}
                       /> ||
                       <Text
                         value={field.input.values}
