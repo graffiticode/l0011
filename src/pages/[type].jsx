@@ -1,3 +1,14 @@
+/*
+
+  data = { schema, props }
+
+  Get the schema from the static schema.json.
+  Get the props from the state of the form.
+  The property editor will delete the schema and post the rest of the data
+  to the state of the editor.
+  
+ */
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { compile } from '../swr/fetchers';
@@ -20,6 +31,15 @@ const View = (props) => {
   const [ height, setHeight ] = useState(0);
   const [ newId, setNewId ] = useState(id);
 
+  // Post id across iframe boundary.
+  useEffect(() => {
+    window.parent.postMessage({id: newId}, "*");
+  }, [newId]);
+
+  useEffect(() => {
+    window.parent.postMessage({height}, "*");
+  }, [height]);
+
   useEffect(() => {
     // If `id` changes, then doCompile.
     setNewId(id);
@@ -27,7 +47,7 @@ const View = (props) => {
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
-    console.log("View/state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
+    console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
     case "compile":
       setDoCompile(false);
@@ -51,23 +71,20 @@ const View = (props) => {
     doCompile && accessToken && newId && {
       accessToken,
       id: newId,
-      data: state.data,
+      data: {}, //state.data,
     },
     compile
   );
 
   if (compileResp.data) {
     const { id, data } = compileResp.data;
+    console.log("L0011 [type] id=" + id + " data=" + JSON.stringify(data, null, 2));
     state.apply({
       type: "compile",
       args: data,
     });
     setNewId(id);
   }
-
-  useEffect(() => {
-    window.parent.postMessage({height, id}, "*");
-  }, [id, height]);
 
   return (
     isNonNullNonEmptyObject(state) &&

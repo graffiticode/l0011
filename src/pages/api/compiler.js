@@ -18,6 +18,7 @@ export class Checker extends BasisChecker {
 export class Transformer extends BasisTransformer {
   HELLO(node, options, resume) {
     this.visit(node.elts[0], options, async (e0, v0) => {
+      console.log("HELLO() v=" + JSON.stringify(v, null, 2));
       const err = [];
       const val = {
         hello: v0,
@@ -27,6 +28,7 @@ export class Transformer extends BasisTransformer {
   }
 
   PROG(node, options, resume) {
+    console.log("PROG() options=" + JSON.stringify(options, null, 2));
     this.visit(node.elts[0], options, async (e0, v0) => {
       const err = e0;
       const val = v0.pop();

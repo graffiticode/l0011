@@ -83,9 +83,10 @@ function Toggle({ type, disabled, enabled, onChange }) {
 const optionsFromList = list => list.map((name, id) => ({id, name}));
 
 function Combo({value = "", list, onChange}) {
+  console.log("Combo() value=" + value);
   const [ options ] = useState(optionsFromList(list));
   const [query, setQuery] = useState('')
-  const [selectedOption, setSelectedOption] = useState(null)
+  const [selectedOption, setSelectedOption] = useState(options.find(option => option.name === value))
   const filteredOptions =
     query === ''
       ? options
@@ -189,10 +190,9 @@ function Props({ state }) {
                       <Combo
                         key={key++}
                         list={propDef.enum}
-                        value={state[field.name]}
+                        value={state.data[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
-                      />
-                      ||
+                      /> ||
                       propDef.type === "boolean" &&
                       <Toggle
                         type={field.name}
@@ -216,7 +216,7 @@ function Props({ state }) {
 export const Form = ({ state, setHeight }) => {
   const ref = useRef();
   useEffect(() => {
-    setHeight(ref.current?.offsetHeight + 100);
+    setHeight(ref.current?.offsetHeight);
   }, [ref.current?.offsetHeight]);
   return (
     <div ref={ref}>
