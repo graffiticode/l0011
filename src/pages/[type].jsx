@@ -29,21 +29,23 @@ const View = (props) => {
   const { access_token: accessToken, id } = router.query || props;
   const [ doCompile, setDoCompile ] = useState(false);
   const [ height, setHeight ] = useState(0);
-  const [ newId, setNewId ] = useState(id);
+  const [ lastId, setLastId ] = useState(id);
 
   // Post id across iframe boundary.
-  useEffect(() => {
-    window.parent.postMessage({id: newId}, "*");
-  }, [newId]);
+  // useEffect(() => {
+  //   window.parent.postMessage({id: newId}, "*");
+  // }, [newId]);
 
-  useEffect(() => {
-    window.parent.postMessage({height}, "*");
-  }, [height]);
+  // useEffect(() => {
+  //   window.parent.postMessage({height}, "*");
+  // }, [height]);
 
   useEffect(() => {
     // If `id` changes, then doCompile.
-    setNewId(id);
-    setDoCompile(true);
+    //setNewId(id);
+    if (id) {
+      setDoCompile(true);
+    }
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
@@ -67,11 +69,12 @@ const View = (props) => {
     }
   }));
 
+  console.log("L0011 [type] state.data=" + JSON.stringify(state.data, null, 2));
   const compileResp = useSWR(
-    doCompile && accessToken && newId && {
+    doCompile && accessToken && id && {
       accessToken,
-      id: newId,
-      data: {}, //state.data,
+      id,
+      data: state.data,
     },
     compile
   );
@@ -83,7 +86,10 @@ const View = (props) => {
       type: "compile",
       args: data,
     });
-    setNewId(id);
+    if (id !== lastId) {
+      console.log("L0011 [type] id=" + id);
+      window.parent.postMessage({id}, "*");
+    }
   }
 
   return (

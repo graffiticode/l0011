@@ -85,8 +85,8 @@ const optionsFromList = list => list.map((name, id) => ({id, name}));
 function Combo({value = "", list, onChange}) {
   console.log("Combo() value=" + value);
   const [ options ] = useState(optionsFromList(list));
-  const [query, setQuery] = useState('')
-  const [selectedOption, setSelectedOption] = useState(options.find(option => option.name === value))
+  const [ query, setQuery ] = useState('')
+  const [ selectedOption, setSelectedOption ] = useState(options.find(option => option.name === value))
   const filteredOptions =
     query === ''
       ? options
@@ -167,6 +167,9 @@ function Props({ state }) {
     };
   });
   const handleChange = args => {
+    console.log("L0011 handleChange() args=" + JSON.stringify(args));
+    // FIXME figure out why before we get here, there is so much activity in the
+    // outer components.
     state.apply({
       type: "change",
       args,

@@ -6,7 +6,7 @@ export const compile = async ({ accessToken, id, data }) => {
     const resp = await postApiCompile({ accessToken, id, data });
     return resp;
   } catch (x) {
-    console.log("./swr/fetchers/compile()");
+    console.log("l0011 ./swr/fetchers/compile()");
     console.log(x.stack);
   }
 };
