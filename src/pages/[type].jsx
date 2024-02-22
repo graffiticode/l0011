@@ -15,6 +15,12 @@ import { compile } from '../swr/fetchers';
 import useSWR from 'swr';
 import { Form } from "../components/form";
 import { createState } from "../lib/state";
+import { debounce } from "lodash";
+
+const debouncedPostMessage = debounce(({ id, height }) => {
+  console.log("debounce id=" + id);
+  window.parent.postMessage({id, height}, "*");
+}, 300);
 
 function isNonNullNonEmptyObject(obj) {
   return (
@@ -30,15 +36,7 @@ const View = (props) => {
   const [ doCompile, setDoCompile ] = useState(false);
   const [ height, setHeight ] = useState(0);
   const [ lastId, setLastId ] = useState(id);
-
-  // Post id across iframe boundary.
-  // useEffect(() => {
-  //   window.parent.postMessage({id: newId}, "*");
-  // }, [newId]);
-
-  // useEffect(() => {
-  //   window.parent.postMessage({height}, "*");
-  // }, [height]);
+  console.log("L0011 View() height=" + height);
 
   useEffect(() => {
     // If `id` changes, then doCompile.
@@ -49,7 +47,6 @@ const View = (props) => {
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
-    console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
     case "compile":
       setDoCompile(false);
@@ -69,7 +66,6 @@ const View = (props) => {
     }
   }));
 
-  console.log("L0011 [type] state.data=" + JSON.stringify(state.data, null, 2));
   const compileResp = useSWR(
     doCompile && accessToken && id && {
       accessToken,
@@ -81,14 +77,13 @@ const View = (props) => {
 
   if (compileResp.data) {
     const { id, data } = compileResp.data;
-    console.log("L0011 [type] id=" + id + " data=" + JSON.stringify(data, null, 2));
     state.apply({
       type: "compile",
       args: data,
     });
     if (id !== lastId) {
-      console.log("L0011 [type] id=" + id);
-      window.parent.postMessage({id}, "*");
+      setLastId(id);
+      debouncedPostMessage({id, height});
     }
   }
 
