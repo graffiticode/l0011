@@ -18,7 +18,6 @@ import { createState } from "../lib/state";
 import { debounce } from "lodash";
 
 const debouncedPostMessage = debounce(({ id, height }) => {
-  console.log("debounce id=" + id);
   window.parent.postMessage({id, height}, "*");
 }, 300);
 
@@ -36,7 +35,8 @@ const View = (props) => {
   const [ doCompile, setDoCompile ] = useState(false);
   const [ height, setHeight ] = useState(0);
   const [ lastId, setLastId ] = useState(id);
-  console.log("L0011 View() height=" + height);
+  const [ doSetId, setDoSetId ] = useState(false);
+  console.log("L0011 View() id=" + id);
 
   useEffect(() => {
     // If `id` changes, then doCompile.
@@ -47,6 +47,7 @@ const View = (props) => {
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
+    console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
     case "compile":
       setDoCompile(false);
@@ -56,6 +57,7 @@ const View = (props) => {
       };
     case "change":
       setDoCompile(true);
+      setDoSetId(true);
       return {
         ...data,
         ...args,
@@ -81,7 +83,8 @@ const View = (props) => {
       type: "compile",
       args: data,
     });
-    if (id !== lastId) {
+    if (doSetId && id !== lastId) {
+      setDoSetId(false);
       setLastId(id);
       debouncedPostMessage({id, height});
     }
