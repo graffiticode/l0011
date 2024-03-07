@@ -29,9 +29,6 @@ function render({state}) {
 
 function Text({ value, onChange }) {
   const [ currentValue, setCurrentValue ] = useState(value);
-  useEffect(() => {
-    onChange(currentValue);
-  }, [currentValue]);
   return (
     <div>
       <label htmlFor="email" className="sr-only">
@@ -44,12 +41,13 @@ function Text({ value, onChange }) {
         className="block w-full rounded-none border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6 px-3 focus:outline-none"
         defaultValue={currentValue}
         onChange={(e) => setCurrentValue(e.target.value)}
+        onBlur={() => onChange(currentValue)}
       />
     </div>
   )
 }
 
-function Toggle({ type, disabled, enabled, onChange }) {
+function Toggle({ type, disabled, value: enabled, onChange }) {
   const [checked, setChecked] = useState(enabled)
   useEffect(() => {
     setChecked(enabled);
@@ -121,7 +119,7 @@ function Combo({value = "", list, onChange}) {
                 value={option}
                 className={({ active }) =>
                   classNames(
-                    'relative cursor-default select-none py-2 pl-3 pr-9',
+                    'z-100 relative cursor-default select-none py-2 pl-3 pr-9',
                     active ? 'bg-gray-600 text-white' : 'text-gray-900'
                   )
                 }
@@ -166,8 +164,6 @@ function Props({ state }) {
     };
   });
   const handleChange = args => {
-    // FIXME figure out why before we get here, there is so much activity in the
-    // outer components.
     state.apply({
       type: "change",
       args,
@@ -197,6 +193,7 @@ function Props({ state }) {
                       propDef.type === "boolean" &&
                       <Toggle
                         type={field.name}
+                        value={state.data[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
                       /> ||
                       <Text

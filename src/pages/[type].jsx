@@ -36,7 +36,6 @@ const View = (props) => {
   const [ height, setHeight ] = useState(0);
   const [ lastId, setLastId ] = useState(id);
   const [ doSetId, setDoSetId ] = useState(false);
-  console.log("L0011 View() id=" + id);
 
   useEffect(() => {
     // If `id` changes, then doCompile.
@@ -47,7 +46,6 @@ const View = (props) => {
   }, [id]);
 
   const [ state ] = useState(createState({}, (data, { type, args }) => {
-    console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
     case "compile":
       setDoCompile(false);
