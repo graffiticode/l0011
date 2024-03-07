@@ -9,7 +9,10 @@ export class Transformer extends BasisTransformer {
   PROG(node, options, resume) {
     this.visit(node.elts[0], options, async (e0, v0) => {
       const err = e0;
-      const val = options.data;
+      const val = {
+        ...v0.pop(),
+        ...options.data,
+      };
       resume(err, val);
     });
   }
