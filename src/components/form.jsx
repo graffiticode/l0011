@@ -95,7 +95,6 @@ function Combo({value = "", list, onChange}) {
       onChange(selectedOption.name);
     }
   }, [selectedOption]);
-  let key = 1;
   return (
     <Combobox as="div" value={selectedOption} onChange={setSelectedOption}>
       <div className="relative mt-2">
@@ -115,7 +114,7 @@ function Combo({value = "", list, onChange}) {
           <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-none bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredOptions.map((option) => (
               <Combobox.Option
-                key={key++}
+                key={option.name}
                 value={option}
                 className={({ active }) =>
                   classNames(
@@ -126,10 +125,15 @@ function Combo({value = "", list, onChange}) {
               >
                 {({ active, selected }) => (
                   <>
-                    <span className={classNames('block truncate', selected && 'font-semibold')}>{option.name}</span>
-
+                    <span
+                      key="1"
+                      className={
+                        classNames('block truncate', selected && 'font-semibold')}>
+                      {option.name}
+                    </span>
                     {selected && (
                       <span
+                        key="2"
                         className={classNames(
                           'absolute inset-y-0 right-0 flex items-center pr-4',
                           active ? 'text-white' : 'text-gray-600'
@@ -155,6 +159,9 @@ function Props({ state }) {
   const schema = data.schema;
   const propDefs = schema?.properties || {};
   const fields = Object.keys(propDefs).map(key => {
+    if (data[key] === undefined) {
+      return undefined;
+    }
     const propDef = propDefs[key];
     return {
       name: key,
@@ -162,14 +169,13 @@ function Props({ state }) {
       type: propDef.type,
       input: {type: "Text", values: data[key] || ""},
     };
-  });
+  }).filter(field => field !== undefined);
   const handleChange = args => {
     state.apply({
       type: "change",
       args,
     });
   };
-  let key = 1;
   return (
     <div className="p-2">
       <div className="px-4 py-6 font-light grid grid-cols-1 md:grid-cols-5 text-sm">
@@ -179,13 +185,12 @@ function Props({ state }) {
             const Input = field.input;
             return (
               <>
-                <div key={key++} className="font-mono pt-4 md:pt-0">{field.name}</div>
-                <div key={key++} className="col-span-1 md:col-span-3 text-gray-500 pb-2">{field.desc}<br/><span className="font-mono p-1 rounded-none bg-gray-100 text-xs">{field.type}</span></div>
-                <div key={key++} className="col-span-1">
+                <div key={field.name + "1"} className="font-mono pt-4 md:pt-0">{field.name}</div>
+                <div key={field.name + "2"} className="col-span-1 md:col-span-3 text-gray-500 pb-2">{field.desc}<br/><span className="font-mono p-1 rounded-none bg-gray-100 text-xs">{field.type}</span></div>
+                <div key={field.name + "3"} className="col-span-1">
                   {
                     propDef.enum &&
                       <Combo
-                        key={key++}
                         list={propDef.enum}
                         value={state.data[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
