@@ -1,5 +1,5 @@
 {
-  "name": "@graffiticode/l0002",
+  "name": "@graffiticode/l0011",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.es.js",
@@ -30,7 +30,9 @@
     "bent": "^7.3.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "@headlessui/react": "^2.1.7",
+    "@heroicons/react": "^2.1.5"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.1",
