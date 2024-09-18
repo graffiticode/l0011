@@ -138,28 +138,44 @@ function Combo({value = "", list, onChange}) {
 }
 
 function Props({ state }) {
+  const [ fields, setFields ] = useState([]);
   const data = state.data;
   const schema = data.schema;
   const propDefs = schema?.properties || {};
-  const fields = Object.keys(propDefs).map(key => {
-    if (data[key] === undefined) {
-      return undefined;
-    }
-    const propDef = propDefs[key];
-    return {
-      name: key,
-      desc: propDef.description,
-      type: propDef.type,
-      input: {type: "Text", values: data[key] || ""},
-    };
-  }).filter(field => field !== undefined);
-  console.log("L0011 Props() fields=" + JSON.stringify(fields, null, 2));
+
+  useEffect(() => {
+    const fields = Object.keys(propDefs).map(key => {
+      if (data[key] === undefined) {
+        return undefined;
+      }
+      const propDef = propDefs[key];
+      return {
+        name: key,
+        desc: propDef.description,
+        type: propDef.type,
+        input: {type: "Text", values: data[key] || ""},
+      };
+    }).filter(field => field !== undefined);
+    setFields(fields);
+  }, [propDefs]);
+
   const handleChange = args => {
+    const props = {};
+    Object.keys(propDefs).forEach(key => {
+      if (data[key] !== undefined) {
+        // We have a value for this prop, so capture it.
+        props[key] = data[key];
+      }
+    });
     state.apply({
       type: "change",
-      args,
+      args: {
+        ...props,
+        ...args,
+      },
     });
   };
+
   return (
     <div className="p-2">
       <div className="px-4 py-6 font-light grid grid-cols-1 md:grid-cols-5 text-sm">
