@@ -5,20 +5,15 @@
   "description": "A starter language",
   "type": "object",
   "properties": {
-    "hello": {
-      "description": "The person, place or thing being greeted",
+    "problemStatement": {
+      "description": "Prompt the student.",
       "type": "string",
     },
-    "theme": {
-      "description": "Light or dark theme",
+    "expectedValue": {
+      "description": "Choose the expected color.",
       "type": "string",
-      "enum": ["light", "dark"],
-    },
-    "image": {
-      "description": "URL of an image to display",
-      "type": "string",
-      "subtype": "url"
+      "enum": ["Green", "Yellow", "Red"],
     }
   },
-  "required": ["hello"]
+  "required": []
 }
