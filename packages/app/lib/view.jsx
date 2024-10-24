@@ -68,7 +68,11 @@ export const View = () => {
 
   useEffect(() => {
     if (id && targetOrigin) {
-      window.parent.postMessage({ [id]: state.data }, targetOrigin);
+      const data = {
+        ...state.data,
+        schema: undefined,
+      };
+      window.parent.postMessage({ [id]: data }, targetOrigin);
     }
   }, [JSON.stringify(state.data)]);
 
