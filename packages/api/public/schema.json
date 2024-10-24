@@ -5,15 +5,6 @@
   "description": "A starter language",
   "type": "object",
   "properties": {
-    "problemStatement": {
-      "description": "Prompt the student.",
-      "type": "string",
-    },
-    "expectedValue": {
-      "description": "Choose the expected color.",
-      "type": "string",
-      "enum": ["Green", "Yellow", "Red"],
-    }
   },
   "required": []
 }

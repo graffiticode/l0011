@@ -16,34 +16,22 @@ function isNonNullNonEmptyObject(obj) {
 export const View = () => {
   const [ id, setId ] = useState();
   const [ accessToken, setAccessToken ] = useState();
+  const [ targetOrigin, setTargetOrigin ] = useState(null);
   const [ doRecompile, setDoRecompile ] = useState(false);
-  const [ height, setHeight ] = useState(0);
-
-  useEffect(() => {
-    if (window.location.search) {
-      const params = new URLSearchParams(window.location.search);
-      setId(params.get("id"));
-      const accessToken = params.get("access_token");
-      setAccessToken(accessToken);
-    }
-  }, [window.location.search]);
-
-  useEffect(() => {
-    // If `id` changes, then recompile.
-    if (id) {
-      setDoRecompile(true);
-    }
-  }, [id]);
-
   const [ state ] = useState(createState({}, (data, { type, args }) => {
     // console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
     switch (type) {
-    case "compiled":
+    case "init":
+      setDoRecompile(true);
+      return {
+        ...args,
+      };
+    case "compile":
       return {
         ...data,
         ...args,
       };
-    case "change":
+    case "update":
       setDoRecompile(true);
       return {
         ...data,
@@ -54,6 +42,35 @@ export const View = () => {
       return data;
     }
   }));
+
+  useEffect(() => {
+    if (window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      setId(params.get("id"));
+      setAccessToken(params.get("access_token"));
+      setTargetOrigin(params.get("origin"));
+      const data = params.get("data");
+      if (data) {
+        state.apply({
+          type: "init",
+          args: JSON.parse(data),
+        });
+      }
+    }
+  }, [window.location.search]);
+
+  useEffect(() => {
+    // If `id` changes, then recompile.
+    if (id) {
+      setDoRecompile(true);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (id && targetOrigin) {
+      window.parent.postMessage({ [id]: state.data }, targetOrigin);
+    }
+  }, [JSON.stringify(state.data)]);
 
   const compileResp = useSWR(
     doRecompile && accessToken && id && {
@@ -66,7 +83,7 @@ export const View = () => {
 
   if (compileResp.data) {
     state.apply({
-      type: "compiled",
+      type: "compile",
       args: compileResp.data,
     });
     setDoRecompile(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
@@ -168,7 +168,7 @@ function Props({ state }) {
       }
     });
     state.apply({
-      type: "change",
+      type: "update",
       args: {
         ...props,
         ...args,
@@ -216,15 +216,7 @@ function Props({ state }) {
 }
 
 export const Form = ({ state }) => {
-  const ref = useRef();
-  // useEffect(() => {
-  //   if (ref?.current?.offsetHeight) {
-  //     setHeight(ref.current?.offsetHeight);
-  //   }
-  // }, [ref?.current?.offsetHeight]);
   return (
-    <div ref={ref}>
-      <Props state={state} />
-    </div>
+    <Props state={state} />
   );
 }
