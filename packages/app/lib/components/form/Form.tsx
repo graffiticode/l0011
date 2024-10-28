@@ -10,6 +10,11 @@ function classNames(...classes) {
 
 function Text({ value, onChange }) {
   const [ currentValue, setCurrentValue ] = useState(value);
+
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
+
   return (
     <div>
       <label htmlFor="email" className="sr-only">
@@ -20,8 +25,8 @@ function Text({ value, onChange }) {
         name="text"
         id="text"
         className="block w-full rounded-none border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6 px-3 focus:outline-none"
-        defaultValue={currentValue}
-        onChange={(e) => setCurrentValue(e.target.value)}
+        value={currentValue}
+        onChange={e => setCurrentValue(e.target.value)}
         onBlur={() => onChange(currentValue)}
       />
     </div>
@@ -61,21 +66,30 @@ function Toggle({ disabled, value: enabled, onChange }) {
 
 const optionsFromList = list => list.map((name, id) => ({id, name}));
 
-function Combo({value = "", list, onChange}) {
+function Combo({ value = "", list, onChange }) {
   const [ options ] = useState(optionsFromList(list));
   const [ query, setQuery ] = useState('')
-  const [ selectedOption, setSelectedOption ] = useState(options.find(option => option.name === value))
+  const [ selectedOption, setSelectedOption ] = useState(
+    options.find(option => option.name === value)
+  );
+
+  useEffect(() => {
+    setSelectedOption(options.find(option => option.name === value));
+  }, [value]);
+
   const filteredOptions =
     query === ''
       ? options
       : options.filter((option) => {
           return option.name.toLowerCase().includes(query.toLowerCase())
-      })
+      });
+
   useEffect(() => {
     if (selectedOption) {
       onChange(selectedOption.name);
     }
   }, [selectedOption]);
+
   return (
     <Combobox as="div" value={selectedOption} onChange={setSelectedOption}>
       <div className="relative mt-2">
@@ -138,27 +152,21 @@ function Combo({value = "", list, onChange}) {
 }
 
 function Props({ state }) {
-  const [ fields, setFields ] = useState([]);
   const data = state.data;
   const schema = data.schema;
   const propDefs = schema?.properties || {};
-
-  useEffect(() => {
-    const fields = Object.keys(propDefs).map(key => {
-      if (data[key] === undefined) {
-        return undefined;
-      }
-      const propDef = propDefs[key];
-      return {
-        name: key,
-        desc: propDef.description,
-        type: propDef.type,
-        input: {type: "Text", values: data[key] || ""},
-      };
-    }).filter(field => field !== undefined);
-    setFields(fields);
-  }, [propDefs]);
-
+  const fields = Object.keys(propDefs).map(key => {
+    if (data[key] === undefined) {
+      return undefined;
+    }
+    const propDef = propDefs[key];
+    return {
+      name: key,
+      desc: propDef.description,
+      type: propDef.type,
+      input: {type: "Text", values: data[key] || ""},
+    };
+  }).filter(field => field !== undefined);
   const handleChange = args => {
     const props = {};
     Object.keys(propDefs).forEach(key => {

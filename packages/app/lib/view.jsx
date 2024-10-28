@@ -67,12 +67,12 @@ export const View = () => {
   }, [id]);
 
   useEffect(() => {
-    if (id && targetOrigin) {
+    if (targetOrigin) {
       const data = {
         ...state.data,
         schema: undefined,
       };
-      window.parent.postMessage({ [id]: data }, targetOrigin);
+      window.parent.postMessage({ "0011": data }, targetOrigin);
     }
   }, [JSON.stringify(state.data)]);
 
