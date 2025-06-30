@@ -19,7 +19,11 @@ export const View = () => {
   const [ targetOrigin, setTargetOrigin ] = useState(null);
   const [ doRecompile, setDoRecompile ] = useState(false);
   const [ state ] = useState(createState({}, (data, { type, args }) => {
-    // console.log("L0011 state.apply() type=" + type + " args=" + JSON.stringify(args, null, 2));
+    // console.log(
+    //   "L0011 state.apply()",
+    //   "type=" + type,
+    //   "args=" + JSON.stringify(args, null, 2),
+    // );
     switch (type) {
     case "init":
       setDoRecompile(true);

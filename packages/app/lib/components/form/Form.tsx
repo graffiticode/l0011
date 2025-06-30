@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; React;
 import { Switch } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
-React;
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 function Text({ value, onChange }) {
-  const [ currentValue, setCurrentValue ] = useState(value);
+  const [ currentValue, setCurrentValue ] = useState(value || "");
 
   useEffect(() => {
-    setCurrentValue(value);
+    setCurrentValue(value || "");
   }, [value]);
 
   return (
@@ -151,12 +150,19 @@ function Combo({ value = "", list, onChange }) {
   )
 }
 
-function Props({ state }) {
+function Props({ state, initialData }) {
   const data = state.data;
+  // console.log(
+  //   "Props()",
+  //   "data=" + JSON.stringify(data, null, 2),
+  //   "initialData=" + JSON.stringify(initialData, null, 2),
+  // );
   const schema = data.schema;
+  // Merge initial data with state data
+  const mergedData = { ...initialData, ...data };
   const propDefs = schema?.properties || {};
   const fields = Object.keys(propDefs).map(key => {
-    if (data[key] === undefined) {
+    if (mergedData[key] === undefined && !propDefs[key].default) {
       return undefined;
     }
     const propDef = propDefs[key];
@@ -164,15 +170,15 @@ function Props({ state }) {
       name: key,
       desc: propDef.description,
       type: propDef.type,
-      input: {type: "Text", values: data[key] || ""},
+      input: {type: "Text", values: mergedData[key] || propDefs[key].default || ""},
     };
   }).filter(field => field !== undefined);
   const handleChange = args => {
     const props = {};
     Object.keys(propDefs).forEach(key => {
-      if (data[key] !== undefined) {
+      if (mergedData[key] !== undefined) {
         // We have a value for this prop, so capture it.
-        props[key] = data[key];
+        props[key] = mergedData[key];
       }
     });
     state.apply({
@@ -199,17 +205,17 @@ function Props({ state }) {
                     propDef.enum &&
                       <Combo
                         list={propDef.enum}
-                        value={state.data[field.name]}
+                        value={mergedData[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
                       /> ||
                       propDef.type === "boolean" &&
                       <Toggle
                         disabled={false}
-                        value={state.data[field.name]}
+                        value={mergedData[field.name]}
                         onChange={(value) => handleChange({[field.name]: value})}
                       /> ||
                       <Text
-                        value={field.input.values}
+                        value={mergedData[field.name] || ""}
                         onChange={(value) => handleChange({[field.name]: value})}
                       />
                   }
@@ -223,8 +229,8 @@ function Props({ state }) {
   )
 }
 
-export const Form = ({ state }) => {
+export const Form = ({ state, data: initialData }) => {
   return (
-    <Props state={state} />
+    <Props state={state} initialData={initialData} />
   );
 }
