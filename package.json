@@ -12,7 +12,10 @@
     "lint": "eslint test/",
     "lint:fix": "eslint --fix test/",
     "pack": "rm *.tgz; npm -w packages/app pack",
-    "publish": "npm -w packages/app publish --access public"
+    "publish": "npm -w packages/app publish --access public",
+    "gcp:build": "gcloud builds submit --config cloudbuild.yaml --substitutions=COMMIT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo latest)",
+    "gcp:deploy": "gcloud run deploy l0011 --source . --port 50011 --region us-central1 --platform managed --allow-unauthenticated",
+    "gcp:logs": "gcloud run logs read l0011 --region us-central1"
   },
   "devDependencies": {
     "eslint": "^8.44.0",
