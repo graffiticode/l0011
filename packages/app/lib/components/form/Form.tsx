@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import React, { useState, useEffect } from 'react'; React;
 import { Switch } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 window.gcexports.globalLexicon = {
   "hello" : {
     "tk": 1,
