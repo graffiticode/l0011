@@ -7,13 +7,56 @@
 <script>(function(){var r,a=[];document.addEventListener("readystatechange",function(){document.readyState==="interactive"&&u()});function u(){var n=document.querySelector('label[for="spec-sidebar-toggle"]');n.addEventListener("scroll",o),n.addEventListener("touchmove",o);function o(d){d.preventDefault()}for(var t=document.getElementsByTagName("section"),e=0;e<t.length;e++)t[e].getAttribute("secid")&&a.push(t[e]);var i=window.scrollY,c=!1;window.addEventListener("scroll",function(d){i=window.scrollY,c||(c=!0,window.requestAnimationFrame(function(){s(i),c=!1}))})}function s(n){for(var o=n+document.documentElement.clientHeight/4,t,e=a.length-1;e>=0;e--)if(a[e].offsetTop<o){t=a[e];break}var i=t&&t.getAttribute("secid");i!==r&&(r&&l(r,!1),i&&l(i,!0),r=i)}function l(n,o){document.getElementById("_sidebar_"+n).className=o?"viewing":"";for(var t=n.split(".");t.length;){var e=document.getElementById("_toggle_"+t.join("."));e&&(e.checked=o),t.pop()}}s(window.scrollY);})();</script>
 <script>(function(){var n=document.getElementsByTagName("style")[0].sheet,e;function u(){e&&(n.deleteRule(e),e=void 0)}function d(t){u(),e=n.insertRule('*[data-name="'+t+'"] { background: rgba(230,215,0,0.12); }',n.cssRules.length)}document.documentElement.addEventListener("mouseover",function(t){var a=t.target.attributes["data-name"];a&&d(a.value)});document.documentElement.addEventListener("mouseout",u);})();</script>
 <script>(function(){var R="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",o,p,r,g;document.addEventListener("selectionchange",E);window.addEventListener("resize",C);window.addEventListener("hashchange",x);window.addEventListener("load",x);function S(n){y(new URL(n.target.href))}function x(){y(window.location)}function y(n){var e=n.hash.match(/^#sel-([A-Za-z0-9-_]+)$/);if(!!e){g=e[1],r=k(g);var t=r.getBoundingClientRect(),d=Math.max(20,Math.floor((window.innerHeight-t.height)*.4));window.scrollTo(0,window.scrollY+t.y-d);var c=document.getSelection();c.empty(),c.addRange(r),C()}}function E(n){var e=document.getSelection();if(e.isCollapsed)o&&(o.parentNode.removeChild(o),o=null);else{var t=e.getRangeAt(0);(!r||t.compareBoundaryPoints(Range.START_TO_START,r)!==0||t.compareBoundaryPoints(Range.END_TO_END,r)!==0)&&(r=t,g=B(r),C())}}function C(){if(!!r){p||(p=document.getElementsByTagName("article")[0]),o||(o=document.createElement("a"),document.body.appendChild(o)),o.href="#sel-"+g,o.onclick=S,o.className=r.isOutdated?"outdated-selection-link":"selection-link",o.innerText=r.isOutdated?"!":"\u201F";var n=window.innerWidth<720,e=r.getBoundingClientRect();if(n)o.style.left=Math.floor(e.x+e.width/2+window.scrollX-13)+"px",o.style.top=Math.floor(e.bottom+window.scrollY+10)+"px";else{var t=p.getBoundingClientRect().x;o.style.left=Math.floor(t+window.scrollX-37)+"px",o.style.top=Math.floor(e.y+window.scrollY-3)+"px"}}}function B(n){var e="",t=N(n.startContainer),d=N(n.endContainer),c=M(t,d);return l(c),l(t.slice(c.length).concat(n.startOffset)),l(d.slice(c.length).concat(n.endOffset)),i(L(n.toString())),e;function i(a){do e+=R[a&31|(a>31?32:0)],a>>=5;while(a>0)}function l(a){i(a.length);for(var h=0;h<a.length;h++)i(a[h])}}function k(n){for(var e=new Array(64),t=0;t<64;t++)e[R.charCodeAt(t)]=t;var d=0,c=m(),i=m(),l=m(),a=w(),h=i.pop(),P=O(c.concat(i)),T=l.pop(),A=O(c.concat(l)),u=document.createRange();return u.setStart(P,h),u.setEnd(A,T),u.isOutdated=a!==void 0&&a!==L(u.toString()),u;function w(){for(var s=0,v=0;d<n.length;){var f=e[n.charCodeAt(d++)];if(s|=(f&31)<<v,v+=5,f<32)return s}}function m(){var s=w();if(s!=null){for(var v=new Array(s),f=0;f<s;f++)v[f]=w();return v}}}function N(n){for(var e=[];n!=document.body;){var t=n.parentNode;e.push(Array.prototype.indexOf.call(t.childNodes,n)),n=t}return e.reverse()}function O(n){for(var e=document.body,t=0;t<n.length&&e;t++)e=e.childNodes[n[t]];return e}function M(n,e){for(var t=0;t<n.length&&t<e.length&&n[t]===e[t];)t++;return n.slice(0,t)}function L(n){for(var e=2166136261,t=0;t<n.length;++t)e^=n.charCodeAt(t),e+=(e<<1)+(e<<4)+(e<<7)+(e<<8)+(e<<24);return(e>>15^e)&32767}})();</script>
-</head>
+
+<style>
+pre {
+  position: relative;
+}
+.copy-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--color-pre-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  color: var(--color-grey);
+  font-family: var(--font-family);
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+pre:hover .copy-button {
+  opacity: 1;
+}
+.copy-button:hover {
+  background: var(--color-pre-border);
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("pre > code").forEach(function (code) {
+    var pre = code.parentElement;
+    var btn = document.createElement("button");
+    btn.className = "copy-button";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(code.textContent).then(function () {
+        btn.textContent = "Copied!";
+        setTimeout(function () { btn.textContent = "Copy"; }, 1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
+});
+</script></head>
 <body><article>
 <header>
 <h1>Graffiticode Core Language Specification</h1>
 <section id="intro">
-<pre><code>Version: 0.1.1
-Date: 2025-07-07
+<pre><code>Version: 0.1.2
+Date: 2026-01-26
 </code></pre>
 </section>
 <nav class="spec-toc">
@@ -31,27 +74,26 @@ Date: 2025-07-07
 <li><a href="#sec-Function-Application"><span class="spec-secid">3.2.1</span>Function Application</a></li>
 <li><a href="#sec-Lists"><span class="spec-secid">3.2.2</span>Lists</a></li>
 <li><a href="#sec-Records"><span class="spec-secid">3.2.3</span>Records</a></li>
-<li><a href="#sec-Lambdas"><span class="spec-secid">3.2.4</span>Lambdas</a></li>
-<li><a href="#sec-Let-Bindings"><span class="spec-secid">3.2.5</span>Let Bindings</a></li>
+<li><a href="#sec-Tags"><span class="spec-secid">3.2.4</span>Tags</a></li>
+<li><a href="#sec-Lambdas"><span class="spec-secid">3.2.5</span>Lambdas</a></li>
+<li><a href="#sec-Let-Bindings"><span class="spec-secid">3.2.6</span>Let Bindings</a></li>
 </ol>
 </li>
-<li><a href="#sec-Pattern-Matching"><span class="spec-secid">3.3</span>Pattern Matching</a><ol>
-<li><a href="#sec-Tag-Values"><span class="spec-secid">3.3.1</span>Tag Values</a></li>
-</ol>
-</li>
+<li><a href="#sec-Pattern-Matching"><span class="spec-secid">3.3</span>Pattern Matching</a></li>
 </ol>
 </li>
 <li><a href="#sec-Type-System"><span class="spec-secid">4</span>Type System</a><ol>
 <li><a href="#sec-Primitive-Types"><span class="spec-secid">4.1</span>Primitive Types</a></li>
-<li><a href="#sec-Non-Nullable-Types"><span class="spec-secid">4.2</span>Non-Nullable Types</a></li>
-<li><a href="#sec-Composite-Types"><span class="spec-secid">4.3</span>Composite Types</a></li>
-<li><a href="#sec-Function-Types"><span class="spec-secid">4.4</span>Function Types</a></li>
-<li><a href="#sec-Tag-Value-Type"><span class="spec-secid">4.5</span>Tag Value Type</a><ol>
-<li><a href="#sec-Default-Type-tag-"><span class="spec-secid">4.5.1</span>Default Type: `tag`</a></li>
-<li><a href="#sec-Example"><span class="spec-secid">4.5.2</span>Example</a></li>
+<li><a href="#sec-Composite-Types"><span class="spec-secid">4.2</span>Composite Types</a></li>
+<li><a href="#sec-Function-Types"><span class="spec-secid">4.3</span>Function Types</a></li>
+<li><a href="#sec-Tag-Sets-and-Tag-Value-Type"><span class="spec-secid">4.4</span>Tag Sets and Tag Value Type</a><ol>
+<li><a href="#sec-Tag-Identity-and-Type"><span class="spec-secid">4.4.1</span>Tag Identity and Type</a></li>
+<li><a href="#sec-Tag-Sets-as-Structural-Types"><span class="spec-secid">4.4.2</span>Tag Sets as Structural Types</a></li>
+<li><a href="#sec-Default-Type-tag-"><span class="spec-secid">4.4.3</span>Default Type: `tag`</a></li>
+<li><a href="#sec-Example"><span class="spec-secid">4.4.4</span>Example</a></li>
 </ol>
 </li>
-<li><a href="#sec-Example-Annotated-Definitions"><span class="spec-secid">4.6</span>Example: Annotated Definitions</a></li>
+<li><a href="#sec-Example-Annotated-Definitions"><span class="spec-secid">4.5</span>Example: Annotated Definitions</a></li>
 </ol>
 </li>
 <li><a href="#sec-Semantics"><span class="spec-secid">5</span>Semantics</a><ol>
@@ -72,7 +114,7 @@ Date: 2025-07-07
 <li><a href="#sec-filter"><span class="spec-secid">6.2.6</span>filter</a></li>
 <li><a href="#sec-get"><span class="spec-secid">6.2.7</span>get</a></li>
 <li><a href="#sec-hd"><span class="spec-secid">6.2.8</span>hd</a></li>
-<li><a href="#sec-isEmpty"><span class="spec-secid">6.2.9</span>isEmpty</a></li>
+<li><a href="#sec-isempty"><span class="spec-secid">6.2.9</span>isempty</a></li>
 <li><a href="#sec-log"><span class="spec-secid">6.2.10</span>log</a></li>
 <li><a href="#sec-map"><span class="spec-secid">6.2.11</span>map</a></li>
 <li><a href="#sec-max"><span class="spec-secid">6.2.12</span>max</a></li>
@@ -82,11 +124,12 @@ Date: 2025-07-07
 <li><a href="#sec-not"><span class="spec-secid">6.2.16</span>not</a></li>
 <li><a href="#sec-nth"><span class="spec-secid">6.2.17</span>nth</a></li>
 <li><a href="#sec-or"><span class="spec-secid">6.2.18</span>or</a></li>
-<li><a href="#sec-range"><span class="spec-secid">6.2.19</span>range</a></li>
-<li><a href="#sec-reduce"><span class="spec-secid">6.2.20</span>reduce</a></li>
-<li><a href="#sec-set"><span class="spec-secid">6.2.21</span>set</a></li>
-<li><a href="#sec-sub"><span class="spec-secid">6.2.22</span>sub</a></li>
-<li><a href="#sec-tl"><span class="spec-secid">6.2.23</span>tl</a></li>
+<li><a href="#sec-pow"><span class="spec-secid">6.2.19</span>pow</a></li>
+<li><a href="#sec-range"><span class="spec-secid">6.2.20</span>range</a></li>
+<li><a href="#sec-reduce"><span class="spec-secid">6.2.21</span>reduce</a></li>
+<li><a href="#sec-set"><span class="spec-secid">6.2.22</span>set</a></li>
+<li><a href="#sec-sub"><span class="spec-secid">6.2.23</span>sub</a></li>
+<li><a href="#sec-tl"><span class="spec-secid">6.2.24</span>tl</a></li>
 </ol>
 </li>
 </ol>
@@ -133,6 +176,7 @@ map (double) [1 2 3]..
 <section id="sec-Function-Application" secid="3.2.1">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Function-Application">3.2.1</a></span>Function Application</h3>
 <p>Function application is written in prefix style: <code>add 1 2</code></p>
+<p>Functions have fixed arity, so applications can be parsed unambiguously without grouping syntax. For example, <code>add 1 mul 2 3</code> parses as <code>add(1, mul(2, 3))</code> because the parser knows <code>add</code> takes 2 arguments and <code>mul</code> takes 2 arguments.</p>
 <p>Parentheses are used to defer application: <code>map (double) [1 2 3]</code></p>
 </section>
 <section id="sec-Lists" secid="3.2.2">
@@ -142,24 +186,60 @@ map (double) [1 2 3]..
 </section>
 <section id="sec-Records" secid="3.2.3">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Records">3.2.3</a></span>Records</h3>
-<pre><code>{ name: "Alice", age: 30 }
+<p>Records may use <strong>shorthand syntax</strong> for fields where the value is a reference to a variable of the same name.</p>
+<pre data-language="gc"><code>let foo = 10..
+{foo}         | equivalent to {foo: 10}
+</code></pre>
+<p>This provides a concise way to construct records using in-scope variable names as field keys and values.</p>
+<p>You can also mix shorthand and explicit fields:</p>
+<pre data-language="gc"><code>let x = 1..
+let y = 2..
+{x y z: 3}    | equivalent to {x: 1, y: 2, z: 3}
+</code></pre>
+<pre data-language="gc"><code>{ name: "Alice", age: 30 }
 </code></pre>
 </section>
-<section id="sec-Lambdas" secid="3.2.4">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Lambdas">3.2.4</a></span>Lambdas</h3>
+<section id="sec-Tags" secid="3.2.4">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Tags">3.2.4</a></span>Tags</h3>
+<p>A <strong>tag value</strong> is an arity-0 symbolic value used to represent symbolic variants in pattern matching or other symbolic forms.</p>
+<p>Tag values are <strong>only defined</strong> by using record shorthand syntax. For example:</p>
+<pre data-language="gc"><code>{red blue green}   | defines the tag values red, blue, and green
+</code></pre>
+<p>Tag values:</p>
+<ul>
+<li>Must be introduced via record shorthand notation</li>
+<li>Are resolved as symbolic constants with identity semantics</li>
+<li>Match directly in <code>case</code> expressions:</li>
+</ul>
+<pre><code>let color = get "red" {red blue green}
+case color of
+  red: "warm"
+  blue: "cool"
+  _: "other"
+end
+</code></pre>
+</section>
+<section id="sec-Lambdas" secid="3.2.5">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Lambdas">3.2.5</a></span>Lambdas</h3>
 <pre><code>&lt;x: add x 1&gt;
 </code></pre>
 <p>Multiple parameters: <code>&lt;x y: add x y&gt;</code></p>
 </section>
-<section id="sec-Let-Bindings" secid="3.2.5">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Let-Bindings">3.2.5</a></span>Let Bindings</h3>
+<section id="sec-Let-Bindings" secid="3.2.6">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Let-Bindings">3.2.6</a></span>Let Bindings</h3>
 <pre><code>let double = &lt;x: mul 2 x&gt;..
 </code></pre>
 </section>
 </section>
 <section id="sec-Pattern-Matching" secid="3.3">
 <h2><span class="spec-secid" title="link to this section"><a href="#sec-Pattern-Matching">3.3</a></span>Pattern Matching</h2>
-<p>Pattern matching is done using <code>case</code>: <code>case x of   0: "zero"   1: "one"   _: "other" end</code></p>
+<p>Pattern matching is done using <code>case</code>:</p>
+<pre><code>case x of
+  0: "zero"
+  1: "one"
+  _: "other"
+end
+</code></pre>
 <div class="spec-production" id="Supports">
 <span class="spec-nt"><a href="#Supports" data-name="Supports">Supports</a></span><div class="spec-rhs"><span class="spec-nt"><span data-name="Literal">Literal</span></span><span class="spec-t">values</span></div>
 <div class="spec-rhs"><span class="spec-nt"><span data-name="Tuple">Tuple</span></span><span class="spec-t">destructuring:</span><span class="spec-t">(a, b)</span></div>
@@ -167,25 +247,6 @@ map (double) [1 2 3]..
 <div class="spec-rhs"><span class="spec-nt"><span data-name="Wildcard">Wildcard</span></span><span class="spec-t">_</span></div>
 </div>
 <p>Pattern matching on function arguments is disallowed.</p>
-<section id="sec-Tag-Values" secid="3.3.1">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Tag-Values">3.3.1</a></span>Tag Values</h3>
-<p>A <strong>tag value</strong> is an arity-0 symbolic value that can be used in pattern matching or to encode variant types.</p>
-<pre><code>red
-</code></pre>
-<p>Tag values:</p>
-<ul>
-<li>Are unbound identifiers that appear in expression position.</li>
-<li>May optionally be introduced via implicit enum definitions.</li>
-<li>Match directly in <code>case</code> expressions:</li>
-</ul>
-<pre><code>case color of
-  red: "warm"
-  blue: "cool"
-  _: "other"
-end
-</code></pre>
-<p>Tags are resolved as special constants with symbolic identity. They are case-sensitive and may be compared for equality using regular pattern match semantics.</p>
-</section>
 </section>
 </section>
 <section id="sec-Type-System" secid="4">
@@ -201,69 +262,64 @@ end
 <li><code>any</code> &ndash; Used internally to denote an unconstrained type (e.g., during inference).</li>
 </ul>
 </section>
-<section id="sec-Non-Nullable-Types" secid="4.2">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Non-Nullable-Types">4.2</a></span>Non-Nullable Types</h2>
-<p>Graffiticode types are nullable by default. To indicate that a value must not be <code>null</code>, append an exclamation mark (<code>!</code>) to the type name.</p>
-<pre data-language="gc"><code>string!     | a non-nullable string
-[number]!   | a non-nullable list of numbers
+<section id="sec-Composite-Types" secid="4.2">
+<h2><span class="spec-secid" title="link to this section"><a href="#sec-Composite-Types">4.2</a></span>Composite Types</h2>
+<ul>
+<li><strong>Lists</strong> &ndash; Written as <code>[T]</code> where <code>T</code> is any type. <code>  [string]       | list of strings   [number]       | list of numbers   [[bool]]       | list of lists of booleans  </code></li>
+<li><strong>Records</strong> &ndash; Key-value maps with known keys and types. <code>  { name: string, age: number }  </code></li>
+<li><strong>Tuples</strong> &ndash; Ordered, fixed-length collections with heterogeneous types. <code>  (number, string, bool)  </code></li>
+</ul>
+</section>
+<section id="sec-Function-Types" secid="4.3">
+<h2><span class="spec-secid" title="link to this section"><a href="#sec-Function-Types">4.3</a></span>Function Types</h2>
+<p>Functions are written using Graffiticode lambda signature syntax: <code>&lt;number number: number&gt;   | function taking two numbers and returning a number &lt;string: [string]&gt;        | function taking a string and returning a list of strings &lt;list record: record&gt;     | common signature for structural transformation</code></p>
+<p>Function types are curried by default. That means: <code>&lt;number number: number&gt;</code> is equivalent to a function that returns another function: <code>&lt;number: &lt;number: number&gt;&gt;</code></p>
+</section>
+<section id="sec-Tag-Sets-and-Tag-Value-Type" secid="4.4">
+<h2><span class="spec-secid" title="link to this section"><a href="#sec-Tag-Sets-and-Tag-Value-Type">4.4</a></span>Tag Sets and Tag Value Type</h2>
+<p>Tag values are symbolic constants introduced using record shorthand syntax. They have a default type of <code>tag</code>, and their identity is preserved across bindings.</p>
+<section id="sec-Tag-Identity-and-Type" secid="4.4.1">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Tag-Identity-and-Type">4.4.1</a></span>Tag Identity and Type</h3>
+<p>Tag values are symbolic constants identified <strong>solely by their name</strong>. The same tag name (e.g., <code>A</code>) refers to the same symbolic value, regardless of where it is defined.</p>
+<p>Tag values compare equal by name. For example, <code>A</code> in <code>{A B}</code> and <code>A</code> in <code>{A C}</code> are equal.</p>
+</section>
+<section id="sec-Tag-Sets-as-Structural-Types" secid="4.4.2">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Tag-Sets-as-Structural-Types">4.4.2</a></span>Tag Sets as Structural Types</h3>
+<p>Although tag values are globally identified by name, the <strong>type system tracks which tags are expected to co-occur</strong>.</p>
+<p>For example, <code>{A B}</code> and <code>{A C}</code> are different types:</p>
+<pre><code>{A B}    | type: { A: tag, B: tag }
+{A C}    | type: { A: tag, C: tag }
 </code></pre>
-<p>A non-nullable type is guaranteed to hold a value. Nullable types may be <code>null</code> or missing.</p>
-<p>In general:</p>
-<ul>
-<li><code>T</code> allows <code>null</code></li>
-<li><code>T!</code> disallows <code>null</code></li>
-</ul>
-<p>Type inference will propagate non-nullability when safe.</p>
+<p>This allows the type system to constrain the expected context for pattern matching, record shapes, or enum-style uses of tags.</p>
+<p>Using tags not part of the expected set results in a type error.</p>
 </section>
-<section id="sec-Composite-Types" secid="4.3">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Composite-Types">4.3</a></span>Composite Types</h2>
-<ul>
-<li><strong>Lists</strong> &ndash; Written as <code>[T]</code> where <code>T</code> is any type. <code>gc   [string]       | list of strings   [number]       | list of numbers   [[bool]]       | list of lists of booleans   </code></li>
-<li><strong>Records</strong> &ndash; Key-value maps with known keys and types. <code>gc   { name: string, age: number }   </code></li>
-<li><strong>Tuples</strong> &ndash; Ordered, fixed-length collections with heterogeneous types. <code>gc   (number, string, bool)   </code></li>
-</ul>
-</section>
-<section id="sec-Function-Types" secid="4.4">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Function-Types">4.4</a></span>Function Types</h2>
-<p>Functions are written using Graffiticode lambda signature syntax: <code>gc &lt;number number: number&gt;   | function taking two numbers and returning a number &lt;string: [string]&gt;        | function taking a string and returning a list of strings &lt;list record: record&gt;     | common signature for structural transformation </code></p>
-<p>Function types are curried by default. That means: <code>gc &lt;number number: number&gt; </code> is equivalent to a function that returns another function: <code>gc &lt;number: &lt;number: number&gt;&gt; </code></p>
-</section>
-<section id="sec-Tag-Value-Type" secid="4.5">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Tag-Value-Type">4.5</a></span>Tag Value Type</h2>
-<p>Tag values are symbolic constants with no arguments or payload. They are considered members of an implicit <strong>tag set</strong>, and their type is usually inferred based on the context in which they appear&mdash;such as in pattern matching.</p>
-<section id="sec-Default-Type-tag-" secid="4.5.1">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Default-Type-tag-">4.5.1</a></span>Default Type: `tag`</h3>
+<section id="sec-Default-Type-tag-" secid="4.4.3">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Default-Type-tag-">4.4.3</a></span>Default Type: `tag`</h3>
 <p>By default, a tag value has the type:</p>
 <pre data-language="gc"><code>tag
 </code></pre>
-<p>If your program uses a fixed set of tags in a certain context (e.g., <code>red</code>, <code>green</code>, <code>blue</code>), you can think of the type of those values as a discriminated union:</p>
-<pre data-language="gc"><code>tag ∈ { red, green, blue }
+<p>When tags are introduced with:</p>
+<pre><code>{A B C}
 </code></pre>
-<p>However, Graffiticode does not currently support enumerating or defining tag types explicitly. Instead:</p>
-<ul>
-<li>All tags are treated as having type <code>tag</code>.</li>
-<li>They are comparable for equality using <code>case</code> and pattern matching.</li>
-<li>Their type can unify with record fields, parameters, or variants if used consistently.</li>
-</ul>
+<p>the resulting type is:</p>
+<pre><code>{ A: tag, B: tag, C: tag }
+</code></pre>
+<p>This allows for composition and safe comparison.</p>
 </section>
-<section id="sec-Example" secid="4.5.2">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Example">4.5.2</a></span>Example</h3>
-<pre data-language="gc"><code>case color of
+<section id="sec-Example" secid="4.4.4">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Example">4.4.4</a></span>Example</h3>
+<pre data-language="gc"><code>let colors = {red blue green}..
+case red of
   red: "warm"
   blue: "cool"
   _: "other"
 end
 </code></pre>
-<p>In this case, <code>color</code> is assumed to be of type <code>tag</code>.</p>
+<p>In this case, <code>red</code>, <code>blue</code>, and <code>green</code> are all of type <code>tag</code>, and <code>case</code> matches by identity.</p>
 </section>
 </section>
-<section id="sec-Example-Annotated-Definitions" secid="4.6">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Example-Annotated-Definitions">4.6</a></span>Example: Annotated Definitions</h2>
-<pre data-language="gc"><code>let inc = &lt;x: add x 1&gt;  | type: &lt;number: number&gt;
-let greet = &lt;name: concat ["Hello, " name]&gt;  | type: &lt;string: string&gt;
-let zip = &lt;xs ys: zipLists xs ys&gt;  | type: &lt;[T] [U]: [(T, U)]&gt;
-</code></pre>
-<p>(Note: actual Graffiticode does not use type annotations in <code>let</code> bindings; types are inferred.) (for illustration)</p>
+<section id="sec-Example-Annotated-Definitions" secid="4.5">
+<h2><span class="spec-secid" title="link to this section"><a href="#sec-Example-Annotated-Definitions">4.5</a></span>Example: Annotated Definitions</h2>
 <pre data-language="gc"><code>let inc = &lt;x: add x 1&gt;  | type: &lt;number: number&gt;
 let greet = &lt;name: concat ["Hello, " name]&gt;  | type: &lt;string: string&gt;
 let zip = &lt;xs ys: zipLists xs ys&gt;  | type: &lt;[T] [U]: [(T, U)]&gt;
@@ -373,7 +429,7 @@ let zip = &lt;xs ys: zipLists xs ys&gt;  | type: &lt;[T] [U]: [(T, U)]&gt;
 <td align="left">First item of list</td>
 </tr>
 <tr>
-<td align="left"><code>isEmpty</code></td>
+<td align="left"><code>isempty</code></td>
 <td align="left"><code>&lt;list: bool&gt;</code></td>
 <td align="left">Returns true if the list is empty</td>
 </tr>
@@ -421,6 +477,11 @@ let zip = &lt;xs ys: zipLists xs ys&gt;  | type: &lt;[T] [U]: [(T, U)]&gt;
 <td align="left"><code>or</code></td>
 <td align="left"><code>&lt;bool bool: bool&gt;</code></td>
 <td align="left">Logical OR operation</td>
+</tr>
+<tr>
+<td align="left"><code>pow</code></td>
+<td align="left"><code>&lt;number number: number&gt;</code></td>
+<td align="left">Raises first number to the power of second</td>
 </tr>
 <tr>
 <td align="left"><code>range</code></td>
@@ -504,10 +565,10 @@ equiv "a" "b"    | returns false
 <pre><code>hd [10 20 30]  | returns 10
 </code></pre>
 </section>
-<section id="sec-isEmpty" secid="6.2.9">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-isEmpty">6.2.9</a></span>isEmpty</h3>
+<section id="sec-isempty" secid="6.2.9">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-isempty">6.2.9</a></span>isempty</h3>
 <p>Return true if list is empty, otherwise return false</p>
-<pre><code>isEmpty []  | returns true
+<pre><code>isempty []  | returns true
 </code></pre>
 </section>
 <section id="sec-log" secid="6.2.10">
@@ -569,32 +630,39 @@ or true false   | returns true
 or true true    | returns true
 </code></pre>
 </section>
-<section id="sec-range" secid="6.2.19">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-range">6.2.19</a></span>range</h3>
+<section id="sec-pow" secid="6.2.19">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-pow">6.2.19</a></span>pow</h3>
+<p>Raise the first number to the power of the second</p>
+<pre><code>pow 2 3  | returns 8
+pow 5 2  | returns 25
+</code></pre>
+</section>
+<section id="sec-range" secid="6.2.20">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-range">6.2.20</a></span>range</h3>
 <p>Produce a range list from start to end (exclusive) with step</p>
 <pre><code>range 1 10 2  | returns [1 3 5 7 9]
 </code></pre>
 </section>
-<section id="sec-reduce" secid="6.2.20">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-reduce">6.2.20</a></span>reduce</h3>
+<section id="sec-reduce" secid="6.2.21">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-reduce">6.2.21</a></span>reduce</h3>
 <p>Reduce a list to a single value, starting with an initial value</p>
 <pre><code>reduce (&lt;a b: add a b&gt;) 0 [1 2 3 4]  | returns 10
 </code></pre>
 </section>
-<section id="sec-set" secid="6.2.21">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-set">6.2.21</a></span>set</h3>
+<section id="sec-set" secid="6.2.22">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-set">6.2.22</a></span>set</h3>
 <p>Return a new record with an updated field</p>
 <pre><code>set "a" 2 {a: 1}  | returns {a: 2}
 </code></pre>
 </section>
-<section id="sec-sub" secid="6.2.22">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-sub">6.2.22</a></span>sub</h3>
+<section id="sec-sub" secid="6.2.23">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-sub">6.2.23</a></span>sub</h3>
 <p>Subtract the second number from the first</p>
 <pre><code>sub 5 2  | returns 3
 </code></pre>
 </section>
-<section id="sec-tl" secid="6.2.23">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-tl">6.2.23</a></span>tl</h3>
+<section id="sec-tl" secid="6.2.24">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-tl">6.2.24</a></span>tl</h3>
 <p>Return all but the first item</p>
 <pre><code>tl [10 20 30]  | returns [20 30]
 </code></pre>
@@ -645,33 +713,30 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <li id="_sidebar_3.2.1"><a href="#sec-Function-Application"><span class="spec-secid">3.2.1</span>Function Application</a></li>
 <li id="_sidebar_3.2.2"><a href="#sec-Lists"><span class="spec-secid">3.2.2</span>Lists</a></li>
 <li id="_sidebar_3.2.3"><a href="#sec-Records"><span class="spec-secid">3.2.3</span>Records</a></li>
-<li id="_sidebar_3.2.4"><a href="#sec-Lambdas"><span class="spec-secid">3.2.4</span>Lambdas</a></li>
-<li id="_sidebar_3.2.5"><a href="#sec-Let-Bindings"><span class="spec-secid">3.2.5</span>Let Bindings</a></li>
+<li id="_sidebar_3.2.4"><a href="#sec-Tags"><span class="spec-secid">3.2.4</span>Tags</a></li>
+<li id="_sidebar_3.2.5"><a href="#sec-Lambdas"><span class="spec-secid">3.2.5</span>Lambdas</a></li>
+<li id="_sidebar_3.2.6"><a href="#sec-Let-Bindings"><span class="spec-secid">3.2.6</span>Let Bindings</a></li>
 </ol>
 </li>
-<li id="_sidebar_3.3"><a href="#sec-Pattern-Matching"><span class="spec-secid">3.3</span>Pattern Matching</a>
-<input hidden class="toggle" type="checkbox" id="_toggle_3.3" /><label for="_toggle_3.3"></label>
-<ol>
-<li id="_sidebar_3.3.1"><a href="#sec-Tag-Values"><span class="spec-secid">3.3.1</span>Tag Values</a></li>
-</ol>
-</li>
+<li id="_sidebar_3.3"><a href="#sec-Pattern-Matching"><span class="spec-secid">3.3</span>Pattern Matching</a></li>
 </ol>
 </li>
 <li id="_sidebar_4"><a href="#sec-Type-System"><span class="spec-secid">4</span>Type System</a>
 <input hidden class="toggle" type="checkbox" id="_toggle_4" /><label for="_toggle_4"></label>
 <ol>
 <li id="_sidebar_4.1"><a href="#sec-Primitive-Types"><span class="spec-secid">4.1</span>Primitive Types</a></li>
-<li id="_sidebar_4.2"><a href="#sec-Non-Nullable-Types"><span class="spec-secid">4.2</span>Non-Nullable Types</a></li>
-<li id="_sidebar_4.3"><a href="#sec-Composite-Types"><span class="spec-secid">4.3</span>Composite Types</a></li>
-<li id="_sidebar_4.4"><a href="#sec-Function-Types"><span class="spec-secid">4.4</span>Function Types</a></li>
-<li id="_sidebar_4.5"><a href="#sec-Tag-Value-Type"><span class="spec-secid">4.5</span>Tag Value Type</a>
-<input hidden class="toggle" type="checkbox" id="_toggle_4.5" /><label for="_toggle_4.5"></label>
+<li id="_sidebar_4.2"><a href="#sec-Composite-Types"><span class="spec-secid">4.2</span>Composite Types</a></li>
+<li id="_sidebar_4.3"><a href="#sec-Function-Types"><span class="spec-secid">4.3</span>Function Types</a></li>
+<li id="_sidebar_4.4"><a href="#sec-Tag-Sets-and-Tag-Value-Type"><span class="spec-secid">4.4</span>Tag Sets and Tag Value Type</a>
+<input hidden class="toggle" type="checkbox" id="_toggle_4.4" /><label for="_toggle_4.4"></label>
 <ol>
-<li id="_sidebar_4.5.1"><a href="#sec-Default-Type-tag-"><span class="spec-secid">4.5.1</span>Default Type: `tag`</a></li>
-<li id="_sidebar_4.5.2"><a href="#sec-Example"><span class="spec-secid">4.5.2</span>Example</a></li>
+<li id="_sidebar_4.4.1"><a href="#sec-Tag-Identity-and-Type"><span class="spec-secid">4.4.1</span>Tag Identity and Type</a></li>
+<li id="_sidebar_4.4.2"><a href="#sec-Tag-Sets-as-Structural-Types"><span class="spec-secid">4.4.2</span>Tag Sets as Structural Types</a></li>
+<li id="_sidebar_4.4.3"><a href="#sec-Default-Type-tag-"><span class="spec-secid">4.4.3</span>Default Type: `tag`</a></li>
+<li id="_sidebar_4.4.4"><a href="#sec-Example"><span class="spec-secid">4.4.4</span>Example</a></li>
 </ol>
 </li>
-<li id="_sidebar_4.6"><a href="#sec-Example-Annotated-Definitions"><span class="spec-secid">4.6</span>Example: Annotated Definitions</a></li>
+<li id="_sidebar_4.5"><a href="#sec-Example-Annotated-Definitions"><span class="spec-secid">4.5</span>Example: Annotated Definitions</a></li>
 </ol>
 </li>
 <li id="_sidebar_5"><a href="#sec-Semantics"><span class="spec-secid">5</span>Semantics</a>
@@ -698,7 +763,7 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <li id="_sidebar_6.2.6"><a href="#sec-filter"><span class="spec-secid">6.2.6</span>filter</a></li>
 <li id="_sidebar_6.2.7"><a href="#sec-get"><span class="spec-secid">6.2.7</span>get</a></li>
 <li id="_sidebar_6.2.8"><a href="#sec-hd"><span class="spec-secid">6.2.8</span>hd</a></li>
-<li id="_sidebar_6.2.9"><a href="#sec-isEmpty"><span class="spec-secid">6.2.9</span>isEmpty</a></li>
+<li id="_sidebar_6.2.9"><a href="#sec-isempty"><span class="spec-secid">6.2.9</span>isempty</a></li>
 <li id="_sidebar_6.2.10"><a href="#sec-log"><span class="spec-secid">6.2.10</span>log</a></li>
 <li id="_sidebar_6.2.11"><a href="#sec-map"><span class="spec-secid">6.2.11</span>map</a></li>
 <li id="_sidebar_6.2.12"><a href="#sec-max"><span class="spec-secid">6.2.12</span>max</a></li>
@@ -708,11 +773,12 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <li id="_sidebar_6.2.16"><a href="#sec-not"><span class="spec-secid">6.2.16</span>not</a></li>
 <li id="_sidebar_6.2.17"><a href="#sec-nth"><span class="spec-secid">6.2.17</span>nth</a></li>
 <li id="_sidebar_6.2.18"><a href="#sec-or"><span class="spec-secid">6.2.18</span>or</a></li>
-<li id="_sidebar_6.2.19"><a href="#sec-range"><span class="spec-secid">6.2.19</span>range</a></li>
-<li id="_sidebar_6.2.20"><a href="#sec-reduce"><span class="spec-secid">6.2.20</span>reduce</a></li>
-<li id="_sidebar_6.2.21"><a href="#sec-set"><span class="spec-secid">6.2.21</span>set</a></li>
-<li id="_sidebar_6.2.22"><a href="#sec-sub"><span class="spec-secid">6.2.22</span>sub</a></li>
-<li id="_sidebar_6.2.23"><a href="#sec-tl"><span class="spec-secid">6.2.23</span>tl</a></li>
+<li id="_sidebar_6.2.19"><a href="#sec-pow"><span class="spec-secid">6.2.19</span>pow</a></li>
+<li id="_sidebar_6.2.20"><a href="#sec-range"><span class="spec-secid">6.2.20</span>range</a></li>
+<li id="_sidebar_6.2.21"><a href="#sec-reduce"><span class="spec-secid">6.2.21</span>reduce</a></li>
+<li id="_sidebar_6.2.22"><a href="#sec-set"><span class="spec-secid">6.2.22</span>set</a></li>
+<li id="_sidebar_6.2.23"><a href="#sec-sub"><span class="spec-secid">6.2.23</span>sub</a></li>
+<li id="_sidebar_6.2.24"><a href="#sec-tl"><span class="spec-secid">6.2.24</span>tl</a></li>
 </ol>
 </li>
 </ol>
