@@ -1,0 +1,29 @@
+{
+  "id": "0011",
+  "description": "A minimal Graffiticode display dialect with two primitives: `hello` for rendering a greeting string and `image` for rendering an image from a URL. Emits one rendered element per program. Exists primarily as the simplest working example of the Graffiticode pipeline; for richer UI use L0012 (adds a theme) or L0002 (adds the full base language).",
+  "supported_item_types": [
+    "rendered_display"
+  ],
+  "example_prompts": [
+    {
+      "prompt": "Render a hello greeting for 'world'.",
+      "produces": "rendered_display",
+      "notes": "Canonical minimal program — `hello \"world\"..` renders `hello, world!`."
+    },
+    {
+      "prompt": "Say hello to 'reader'.",
+      "produces": "rendered_display",
+      "notes": "Exercises the `hello` primitive with a non-canonical string so the translator doesn't hardcode 'world'."
+    },
+    {
+      "prompt": "Display the image at https://example.com/photo.png.",
+      "produces": "rendered_display",
+      "notes": "Canonical image program — `image \"https://example.com/photo.png\"..`."
+    },
+    {
+      "prompt": "Show the picture at https://example.com/cat.jpg.",
+      "produces": "rendered_display",
+      "notes": "Exercises the `image` primitive with a different URL and verb so the translator doesn't overfit to one phrasing."
+    }
+  ]
+}
