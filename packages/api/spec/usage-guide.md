@@ -1,5 +1,5 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
-# L0011 User Guide
+# L0011 Usage Guide
 
 Agent-facing guide for authoring L0011 programs. Read this before composing a `create_item` prompt or an `update_item` modification.
 
