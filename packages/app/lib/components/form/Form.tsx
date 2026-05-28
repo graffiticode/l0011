@@ -246,8 +246,8 @@ function Props({ state, initialData }) {
 }
 
 export const Form = ({ state, data: initialData }) => {
-  if (Array.isArray(state.data.errors) && state.data.errors.length > 0) {
-    return renderErrors(state.data.errors);
+  if (Array.isArray(state.errors) && state.errors.length > 0) {
+    return renderErrors(state.errors);
   }
   return (
     <Props state={state} initialData={initialData} />
