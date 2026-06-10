@@ -108,7 +108,7 @@ export const View = () => {
   }, [JSON.stringify(state.data)]);
 
   const compileResp = useSWR(
-    doRecompile && accessToken && id && {
+    doRecompile && id && {
       accessToken,
       id,
       data: state.data,
